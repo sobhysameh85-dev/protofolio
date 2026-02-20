@@ -1,0 +1,85 @@
+/* خطوط روبوتو - نسق خفيف */
+.roboto-light {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+/* إضافة padding للمحتوى */
+.custom-padding {
+  padding-right: 30%;  /* تغيير الحشوة حسب الحاجة */
+}
+
+/* تنسيق البطاقات */
+.card {
+  margin: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* تحسين الظل */
+  transition: all 0.3s ease;  /* إضافة تأثيرات عند المرور على البطاقة */
+}
+
+/* تأثير التمرير للبطاقات */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1); /* تأثير الظل عند التمرير */
+}
+
+/* تنسيق الزر داخل البطاقة */
+.card-body .btn-primary {
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  padding: 10px 20px;
+}
+
+.card-body .btn-primary:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
+
+/* تنسيق الحاوية للأزرار */
+.button-container {
+  display: flex;
+  background-color: rgb(27, 133, 219);
+  width: 250px;
+  height: 40px;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
+    rgba(27, 133, 219, 0.5) 5px 10px 15px;
+}
+
+/* تنسيق الأزرار داخل الحاوية */
+.button {
+  outline: 0 !important;
+  border: 0 !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: all ease-in-out 0.3s;
+  cursor: pointer;
+}
+
+.button:hover {
+  transform: translateY(-3px); /* تأثير على الأزرار عند التمرير */
+}
+
+/* أيقونات الأزرار */
+.icon {
+  font-size: 20px;
+  color: #fff;
+}
+
+/* تحسين التنسيق العام للمحتوى */
+.container {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
