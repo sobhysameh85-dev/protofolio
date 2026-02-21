@@ -8,163 +8,115 @@
   font-variation-settings: "wdth" 100;
 }
 
-/* إضافة padding للمحتوى */
-.custom-padding {
-  padding-right: 30%;  /* تغيير الحشوة حسب الحاجة */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
 }
 
-/* تنسيق البطاقات */
-.card {
-  margin: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* تحسين الظل */
-  transition: all 0.3s ease;  /* إضافة تأثيرات عند المرور على البطاقة */
+body {
+    background-color: #f4f7f6;
+    color: #333;
 }
 
-/* تأثير التمرير للبطاقات */
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1); /* تأثير الظل عند التمرير */
+/* Navigation */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 10%;
+    background: #2c3e50;
+    color: white;
 }
 
-/* تنسيق الزر داخل البطاقة */
-.card-body .btn-primary {
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  padding: 10px 20px;
+nav ul {
+    display: flex;
+    list-style: none;
 }
 
-.card-body .btn-primary:hover {
-  background-color: #0056b3;
-  transform: scale(1.1);
+nav ul li {
+    margin-right: 20px;
 }
 
-/* تنسيق الحاوية للأزرار */
-.button-container {
-  display: flex;
-  background-color: rgb(27, 133, 219);
-  width: 250px;
-  height: 40px;
-  align-items: center;
-  justify-content: space-around;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
-    rgba(27, 133, 219, 0.5) 5px 10px 15px;
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
 }
 
-/* تنسيق الأزرار داخل الحاوية */
-.button {
-  outline: 0 !important;
-  border: 0 !important;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  transition: all ease-in-out 0.3s;
-  cursor: pointer;
+/* Hero Section */
+.hero {
+    height: 60vh;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 0 20px;
 }
 
-.button:hover {
-  transform: translateY(-3px); /* تأثير على الأزرار عند التمرير */
+.hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
+
+.btn {
+    margin-top: 20px;
+    padding: 10px 25px;
+    background-color: #e67e22;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
 }
 
-/* أيقونات الأزرار */
-.icon {
-  font-size: 20px;
-  color: #fff;
-}
-
-/* تحسين التنسيق العام للمحتوى */
+/* Cards Section */
 .container {
-  padding-top: 40px;
-  padding-bottom: 40px;
-  padding-left: 15px;
-  padding-right: 15px;
+    padding: 50px 10%;
 }
 
-/* From Uiverse.io by eslam-hany */ 
-.button-container {
-  display: flex;
-  background-color: rgba(0, 73, 144);
-  width: 250px;
-  height: 40px;
-  align-items: center;
-  justify-content: space-around;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
-    rgba(0, 73, 144, 0.5) 5px 10px 15px;
-  transition: all 0.5s;
-}
-.button-container:hover {
-  width: 300px;
-  transition: all 0.5s;
+.cards-wrapper {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
-.button {
-  outline: 0 !important;
-  border: 0 !important;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  transition: all ease-in-out 0.3s;
-  cursor: pointer;
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
 }
 
-.button:hover {
-  transform: translateY(-3px);
+.card:hover { transform: translateY(-10px); }
+
+.card .icon { font-size: 50px; margin-bottom: 15px; }
+
+.science { border-top: 5px solid #27ae60; } /* الأخضر للعلوم */
+.social { border-top: 5px solid #2980b9; }  /* الأزرق للدراسات */
+
+.more {
+    display: inline-block;
+    margin-top: 15px;
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
 }
 
-.icon {
-  font-size: 20px;
-}
-
-/* From Uiverse.io by eslam-hany */ 
-.button-container {
-  display: flex;
-  background-color: rgba(0, 73, 144);
-  width: 250px;
-  height: 40px;
-  align-items: center;
-  justify-content: space-around;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
-    rgba(0, 73, 144, 0.5) 5px 10px 15px;
-  transition: all 0.5s;
-}
-.button-container:hover {
-  width: 300px;
-  transition: all 0.5s;
-}
-
-.button {
-  outline: 0 !important;
-  border: 0 !important;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  transition: all ease-in-out 0.3s;
-  cursor: pointer;
-}
-
-.button:hover {
-  transform: translateY(-3px);
-}
-
-.icon {
-  font-size: 20px;
+/* Footer */
+footer {
+    text-align: center;
+    padding: 30px;
+    background: #2c3e50;
+    color: white;
+    margin-top: 50px;
 }
 
 
