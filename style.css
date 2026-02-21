@@ -107,9 +107,7 @@ nav ul li a {
     transition: transform 0.3s;
 }
 
-.card a{
-    margin-top: 40px;
-}
+
 
 .card:hover { transform: translateY(-10px); }
 
