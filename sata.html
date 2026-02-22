@@ -1,41 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>علوم</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/all.min.css">
     <link rel="stylesheet" href="./style.css">
     <script src="./js/bootstrap.bundle.min.js"></script>
 </head>
-<body>
-      <section class="hero text-center text-white d-flex align-items-center">
+
+<body class="p-4">
+
+    <section class="hero text-center text-white d-flex align-items-center">
         <div class="container">
             <h1 class="display-5 fw-bold">منصة تعليم العلوم</h1>
             <p class="lead">اختر مرحلتك الدراسية وابدأ رحلتك التعليمية</p>
         </div>
     </section>
-    <h1>الفديوهات</h1>
-    <div class="container">
-        <div class="card level-card text-center p-3">
-            <a href="https://www.youtube.com/watch?v=3Wib6kUVczw" target="_blank">
-                 YouTube مشاهدة الفيديو على
-            </a>
-            </div>
-            <br>
-            <hr>
-            <div class="card level-card text-center p-3">
 
-                <a href="https://www.youtube.com/watch?v=m0fmEWc8kEI" target="_blank">
-                 YouTube مشاهدة الفيديو على
-                </a>
-            </div>
-        </div>   
+    <h2 class="mt-4 mb-4">الفيديوهات</h2>
+
+    <div id="cards" class="row"></div>
+
+    <script>
+        const container = document.getElementById("cards");
+        const params = new URLSearchParams(window.location.search);
+        const isAdmin = params.get("admin") === "123";
+
+        // 🔥 اسم الصفحة الحالي تلقائيًا
+        const pageName = window.location.pathname.split("/").pop().replace(".html", "");
+        const storageKey = pageName + "Cards";
+
+        // جلب البيانات الخاصة بهذه الصفحة فقط
+        let cards = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+        // عرض الكروت
+        function renderCards() {
+
+            container.innerHTML = "";
+
+            if (cards.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center">
+                        <p class="text-muted">لا يوجد فيديوهات بعد</p>
+                    </div>
+                `;
+                return;
+            }
+
+            cards.forEach((card, index) => {
+                container.innerHTML += `
+                    <div class="col-md-4 mb-3">
+                        <div class="card p-3 shadow-sm">
+                            <h5>${card.title}</h5>
+                            <a href="${card.link}" target="_blank" class="btn btn-success mb-2 w-100">
+                                فتح الرابط
+                            </a>
+
+                            ${isAdmin ? `
+                                <button class="btn btn-warning btn-sm mb-1 w-100" onclick="editCard(${index})">
+                                    تعديل
+                                </button>
+                                <button class="btn btn-danger btn-sm w-100" onclick="deleteCard(${index})">
+                                    حذف
+                                </button>
+                            ` : ""}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // حذف كارد
+        function deleteCard(index) {
+            if (confirm("هل أنت متأكد من الحذف؟")) {
+                cards.splice(index, 1);
+                localStorage.setItem(storageKey, JSON.stringify(cards));
+                renderCards();
+            }
+        }
+
+        // تعديل كارد
+        function editCard(index) {
+            const newTitle = prompt("العنوان الجديد:", cards[index].title);
+            const newLink = prompt("الرابط الجديد:", cards[index].link);
+
+            if (newTitle && newLink) {
+                cards[index] = { title: newTitle, link: newLink };
+                localStorage.setItem(storageKey, JSON.stringify(cards));
+                renderCards();
+            }
+        }
+
+        renderCards();
+    </script>
+
 </body>
 </html>

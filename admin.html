@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+</head>
+
+<body>
+
+    <h2>تسجيل دخول الأدمن</h2>
+
+    <input type="password" id="adminPass" placeholder="ادخل كلمة مرور الأدمن">
+    <button onclick="checkPassword()">دخول</button>
+
+    <p id="message"></p>
+
+    <script>
+        function checkPassword() {
+            var password = document.getElementById("adminPass").value;
+            var correctPassword = "sameh01151186762sameh";
+
+            if (password === correctPassword) {
+                const a = document.createElement("a");
+                a.href = "plus.html";
+
+                const button = document.createElement("button");
+                button.textContent = "الانتقال إلى plus";
+
+                a.appendChild(button);
+                document.body.appendChild(a);
+            }
+         else {
+            document.getElementById("message").innerText = "كلمة المرور غير صحيحة";
+        }
+        }
+    </script>
+
+</body>
+
+</html>

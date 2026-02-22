@@ -15,7 +15,7 @@
     <script src="./js/bootstrap.bundle.min.js"></script>
 </head>
 
-<body>
+<body class="p-4">
     <section class="hero text-center text-white d-flex align-items-center">
         <div class="container">
             <h1 class="display-5 fw-bold">منصة تعليم العلوم</h1>
@@ -23,21 +23,79 @@
         </div>
     </section>
     <h1>الفديوهات</h1>
-    <div class="container">
-        <div class="card level-card text-center p-3">
-            <a href="https://www.youtube.com/watch?v=3Wib6kUVczw" target="_blank">
-                YouTube مشاهدة الفيديو على
-            </a>
-        </div>
-        <br>
-        <hr>
-        <div class="card level-card text-center p-3">
 
-            <a href="https://www.youtube.com/watch?v=m0fmEWc8kEI" target="_blank">
-                YouTube مشاهدة الفيديو على
-            </a>
+
+
+    <div id="cards" class="row"></div>
+
+    <script>
+        const container = document.getElementById("cards");
+        const params = new URLSearchParams(window.location.search);
+        const isAdmin = params.get("admin") === "123";
+
+        // جلب البيانات المخزنة
+        let cards = JSON.parse(localStorage.getItem("rabaaCards")) || [];
+
+        // إضافة كارد جديد من الرابط
+        const title = params.get("title");
+        const link = params.get("link");
+
+        if (title && link) {
+            cards.push({ title, link });
+            localStorage.setItem("rabaaCards", JSON.stringify(cards));
+        }
+
+        // عرض الكروت
+        function renderCards() {
+            container.innerHTML = "";
+
+            cards.forEach((card, index) => {
+                container.innerHTML += `
+        <div class="col-md-4 mb-3">
+            <div class="card p-3">
+                <h5>${card.title}</h5>
+                <a href="${card.link}" target="_blank" class="btn btn-success mb-2">
+                    فتح الرابط
+                </a>
+
+                ${isAdmin ? `
+                <button class="btn btn-warning btn-sm mb-1" onclick="editCard(${index})">
+                    تعديل
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteCard(${index})">
+                    حذف
+                </button>
+                ` : ""}
+
+            </div>
         </div>
-    </div> <video src="https://www.youtube.com/watch?v=3Wib6kUVczw"></video>
+        `;
+            });
+        }
+
+        // حذف
+        function deleteCard(index) {
+            if (confirm("هل أنت متأكد من الحذف؟")) {
+                cards.splice(index, 1);
+                localStorage.setItem("rabaaCards", JSON.stringify(cards));
+                renderCards();
+            }
+        }
+
+        // تعديل
+        function editCard(index) {
+            const newTitle = prompt("العنوان الجديد:", cards[index].title);
+            const newLink = prompt("الرابط الجديد:", cards[index].link);
+
+            if (newTitle && newLink) {
+                cards[index] = { title: newTitle, link: newLink };
+                localStorage.setItem("rabaaCards", JSON.stringify(cards));
+                renderCards();
+            }
+        }
+
+        renderCards();
+    </script>
 </body>
 
 </html>
