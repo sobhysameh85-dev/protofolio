@@ -1,41 +1,220 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دراسات</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+    <title>الدراسات</title>
+
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/all.min.css">
     <link rel="stylesheet" href="./style.css">
     <script src="./js/bootstrap.bundle.min.js"></script>
 </head>
-<body>
-      <section class="hero text-center text-white d-flex align-items-center">
+
+<body class="p-4">
+
+    <section class="hero text-center text-white d-flex align-items-center">
         <div class="container">
-            <h1 class="display-5 fw-bold">منصة تعليم الدرسات</h1>
+            <h1 class="display-5 fw-bold">منصة تعليم الدراسات</h1>
             <p class="lead">اختر مرحلتك الدراسية وابدأ رحلتك التعليمية</p>
         </div>
     </section>
-    <h1>الفديوهات</h1>
-    <div class="container">
-        <div class="card level-card text-center p-3">
-            <a href="https://www.youtube.com/watch?v=3Wib6kUVczw" target="_blank">
-                 YouTube مشاهدة الفيديو على
-            </a>
-            </div>
-            <br>
-            <hr>
-            <div class="card level-card text-center p-3">
 
-                <a href="https://www.youtube.com/watch?v=m0fmEWc8kEI" target="_blank">
-                 YouTube مشاهدة الفيديو على
-                </a>
-            </div>
-        </div>  
+    <hr>
+
+    <!-- ================= جدول ================= -->
+    <div class="container mt-4">
+
+        <h3 class="mb-3">جدول الحصص</h3>
+
+        <div id="adminControls" class="mb-3"></div>
+
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>اليوم</th>
+                    <th>المادة</th>
+                    <th>الوقت</th>
+                    <th id="actionsHeader"></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+
+    </div>
+
+    <hr>
+
+    <!-- ================= فيديوهات ================= -->
+    <div class="container mt-4">
+        <h3 class="mb-3">الفيديوهات</h3>
+        <div id="cards" class="row"></div>
+    </div>
+
+    <script>
+
+        /* =======================
+            تعريف الأدمن
+        ======================== */
+        const params = new URLSearchParams(window.location.search);
+        const isAdmin = params.get("admin") === "123";
+
+        /* =======================
+            جدول الحصص
+        ======================== */
+        const tableKey = "scheduleTable";
+        let rows = JSON.parse(localStorage.getItem(tableKey)) || [];
+
+        const tableBody = document.getElementById("tableBody");
+        const adminControls = document.getElementById("adminControls");
+        const actionsHeader = document.getElementById("actionsHeader");
+
+        if (isAdmin) {
+            adminControls.innerHTML =
+                `<button class="btn btn-primary" onclick="addRow()">إضافة صف</button>`;
+            actionsHeader.innerText = "إدارة";
+        }
+
+        function renderTable() {
+            tableBody.innerHTML = "";
+
+            if (rows.length === 0) {
+                tableBody.innerHTML =
+                    `<tr>
+                        <td colspan="4" class="text-muted">لا يوجد بيانات بعد</td>
+                    </tr>`;
+                return;
+            }
+
+            rows.forEach((row, index) => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${row.day}</td>
+                        <td>${row.subject}</td>
+                        <td>${row.time}</td>
+                        ${isAdmin ? `
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editRow(${index})">تعديل</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteRow(${index})">حذف</button>
+                            </td>
+                        ` : ""}
+                    </tr>`;
+            });
+        }
+
+        function addRow() {
+            const day = prompt("اليوم:");
+            const subject = prompt("المادة:");
+            const time = prompt("الوقت:");
+
+            if (day && subject && time) {
+                rows.push({ day, subject, time });
+                localStorage.setItem(tableKey, JSON.stringify(rows));
+                renderTable();
+            }
+        }
+
+        function editRow(index) {
+            const day = prompt("اليوم:", rows[index].day);
+            const subject = prompt("المادة:", rows[index].subject);
+            const time = prompt("الوقت:", rows[index].time);
+
+            if (day && subject && time) {
+                rows[index] = { day, subject, time };
+                localStorage.setItem(tableKey, JSON.stringify(rows));
+                renderTable();
+            }
+        }
+
+        function deleteRow(index) {
+            if (confirm("هل أنت متأكد من الحذف؟")) {
+                rows.splice(index, 1);
+                localStorage.setItem(tableKey, JSON.stringify(rows));
+                renderTable();
+            }
+        }
+
+        renderTable();
+
+
+        /* =======================
+            الفيديوهات
+        ======================== */
+        const cardsKey = "rabaaCards";
+        let cards = JSON.parse(localStorage.getItem(cardsKey)) || [];
+        const cardsContainer = document.getElementById("cards");
+
+        if (isAdmin) {
+            cardsContainer.insertAdjacentHTML("beforebegin",
+                `<button class="btn btn-success mb-3" onclick="addCard()">إضافة فيديو</button>`
+            );
+        }
+
+        function renderCards() {
+            cardsContainer.innerHTML = "";
+
+            if (cards.length === 0) {
+                cardsContainer.innerHTML =
+                    `<div class="col-12 text-center">
+                        <p class="text-muted">لا يوجد فيديوهات بعد</p>
+                    </div>`;
+                return;
+            }
+
+            cards.forEach((card, index) => {
+                cardsContainer.innerHTML += `
+                    <div class="col-md-4 mb-3">
+                        <div class="card p-3">
+                            <h5>${card.title}</h5>
+                            <a href="${card.link.startsWith('http') ? card.link : 'https://' + card.link}" 
+                               target="_blank" 
+                               class="btn btn-success mb-2">
+                                فتح الرابط
+                            </a>
+                            ${isAdmin ? `
+                                <button class="btn btn-warning btn-sm mb-1" onclick="editCard(${index})">تعديل</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCard(${index})">حذف</button>
+                            ` : ""}
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function addCard() {
+            const title = prompt("عنوان الفيديو:");
+            const link = prompt("رابط الفيديو:");
+
+            if (title && link) {
+                cards.push({ title, link });
+                localStorage.setItem(cardsKey, JSON.stringify(cards));
+                renderCards();
+            }
+        }
+
+        function editCard(index) {
+            const title = prompt("العنوان الجديد:", cards[index].title);
+            const link = prompt("الرابط الجديد:", cards[index].link);
+
+            if (title && link) {
+                cards[index] = { title, link };
+                localStorage.setItem(cardsKey, JSON.stringify(cards));
+                renderCards();
+            }
+        }
+
+        function deleteCard(index) {
+            if (confirm("هل أنت متأكد من الحذف؟")) {
+                cards.splice(index, 1);
+                localStorage.setItem(cardsKey, JSON.stringify(cards));
+                renderCards();
+            }
+        }
+
+        renderCards();
+
+    </script>
+
 </body>
+
 </html>

@@ -7,88 +7,212 @@
     <title>علوم</title>
 
     <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/all.min.css">
     <link rel="stylesheet" href="./style.css">
     <script src="./js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body class="p-4">
 
-    <section class="text-center mb-4">
-        <h1 class="fw-bold">الفيديوهات</h1>
+    <section class="hero text-center text-white d-flex align-items-center">
+        <div class="container">
+            <h1 class="display-5 fw-bold">منصة تعليم العلوم</h1>
+            <p class="lead">اختر مرحلتك الدراسية وابدأ رحلتك التعليمية</p>
+        </div>
     </section>
 
-    <div id="cards" class="row"></div>
+    <hr>
+
+    <!-- ================= جدول ================= -->
+    <div class="container mt-4">
+
+        <h3 class="mb-3">جدول الحصص</h3>
+
+        <div id="adminControls" class="mb-3"></div>
+
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>اليوم</th>
+                    <th>المادة</th>
+                    <th>الوقت</th>
+                    <th id="actionsHeader"></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+
+    </div>
+
+    <hr>
+
+    <!-- ================= فيديوهات ================= -->
+    <div class="container mt-4">
+        <h3 class="mb-3">الفيديوهات</h3>
+        <div id="cards" class="row"></div>
+    </div>
 
     <script>
-        const container = document.getElementById("cards");
+
+        /* =======================
+            تعريف الأدمن
+        ======================== */
         const params = new URLSearchParams(window.location.search);
         const isAdmin = params.get("admin") === "123";
 
-        // اسم الصفحة الحالي تلقائياً
-        const pageName = window.location.pathname.split("/").pop().replace(".html", "");
-        const storageKey = pageName + "Cards";
+        /* =======================
+            جدول الحصص
+        ======================== */
+        const tableKey = "scheduleTable";
+        let rows = JSON.parse(localStorage.getItem(tableKey)) || [];
 
-        // جلب البيانات المخزنة
-        let cards = JSON.parse(localStorage.getItem(storageKey)) || [];
+        const tableBody = document.getElementById("tableBody");
+        const adminControls = document.getElementById("adminControls");
+        const actionsHeader = document.getElementById("actionsHeader");
 
-        // عرض الكروت
+        if (isAdmin) {
+            adminControls.innerHTML =
+                `<button class="btn btn-primary" onclick="addRow()">إضافة صف</button>`;
+            actionsHeader.innerText = "إدارة";
+        }
+
+        function renderTable() {
+            tableBody.innerHTML = "";
+
+            if (rows.length === 0) {
+                tableBody.innerHTML =
+                    `<tr>
+                        <td colspan="4" class="text-muted">لا يوجد بيانات بعد</td>
+                    </tr>`;
+                return;
+            }
+
+            rows.forEach((row, index) => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${row.day}</td>
+                        <td>${row.subject}</td>
+                        <td>${row.time}</td>
+                        ${isAdmin ? `
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editRow(${index})">تعديل</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteRow(${index})">حذف</button>
+                            </td>
+                        ` : ""}
+                    </tr>`;
+            });
+        }
+
+        function addRow() {
+            const day = prompt("اليوم:");
+            const subject = prompt("المادة:");
+            const time = prompt("الوقت:");
+
+            if (day && subject && time) {
+                rows.push({ day, subject, time });
+                localStorage.setItem(tableKey, JSON.stringify(rows));
+                renderTable();
+            }
+        }
+
+        function editRow(index) {
+            const day = prompt("اليوم:", rows[index].day);
+            const subject = prompt("المادة:", rows[index].subject);
+            const time = prompt("الوقت:", rows[index].time);
+
+            if (day && subject && time) {
+                rows[index] = { day, subject, time };
+                localStorage.setItem(tableKey, JSON.stringify(rows));
+                renderTable();
+            }
+        }
+
+        function deleteRow(index) {
+            if (confirm("هل أنت متأكد من الحذف؟")) {
+                rows.splice(index, 1);
+                localStorage.setItem(tableKey, JSON.stringify(rows));
+                renderTable();
+            }
+        }
+
+        renderTable();
+
+
+        /* =======================
+            الفيديوهات
+        ======================== */
+        const cardsKey = "rabaaCards";
+        let cards = JSON.parse(localStorage.getItem(cardsKey)) || [];
+        const cardsContainer = document.getElementById("cards");
+
+        if (isAdmin) {
+            cardsContainer.insertAdjacentHTML("beforebegin",
+                `<button class="btn btn-success mb-3" onclick="addCard()">إضافة فيديو</button>`
+            );
+        }
+
         function renderCards() {
-            container.innerHTML = "";
+            cardsContainer.innerHTML = "";
 
             if (cards.length === 0) {
-                container.innerHTML = `
-                    <div class="col-12 text-center">
+                cardsContainer.innerHTML =
+                    `<div class="col-12 text-center">
                         <p class="text-muted">لا يوجد فيديوهات بعد</p>
-                    </div>
-                `;
+                    </div>`;
                 return;
             }
 
             cards.forEach((card, index) => {
-                container.innerHTML += `
+                cardsContainer.innerHTML += `
                     <div class="col-md-4 mb-3">
-                        <div class="card p-3 shadow-sm">
+                        <div class="card p-3">
                             <h5>${card.title}</h5>
-                            <a href="${card.link}" target="_blank" class="btn btn-success mb-2">
+                            <a href="${card.link.startsWith('http') ? card.link : 'https://' + card.link}" 
+                               target="_blank" 
+                               class="btn btn-success mb-2">
                                 فتح الرابط
                             </a>
-
                             ${isAdmin ? `
-                                <button class="btn btn-warning btn-sm mb-1 w-100" onclick="editCard(${index})">
-                                    تعديل
-                                </button>
-                                <button class="btn btn-danger btn-sm w-100" onclick="deleteCard(${index})">
-                                    حذف
-                                </button>
+                                <button class="btn btn-warning btn-sm mb-1" onclick="editCard(${index})">تعديل</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCard(${index})">حذف</button>
                             ` : ""}
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
-        // حذف كارد
-        function deleteCard(index) {
-            if (confirm("هل أنت متأكد من الحذف؟")) {
-                cards.splice(index, 1);
-                localStorage.setItem(storageKey, JSON.stringify(cards));
+        function addCard() {
+            const title = prompt("عنوان الفيديو:");
+            const link = prompt("رابط الفيديو:");
+
+            if (title && link) {
+                cards.push({ title, link });
+                localStorage.setItem(cardsKey, JSON.stringify(cards));
                 renderCards();
             }
         }
 
-        // تعديل كارد
         function editCard(index) {
-            const newTitle = prompt("العنوان الجديد:", cards[index].title);
-            const newLink = prompt("الرابط الجديد:", cards[index].link);
+            const title = prompt("العنوان الجديد:", cards[index].title);
+            const link = prompt("الرابط الجديد:", cards[index].link);
 
-            if (newTitle && newLink) {
-                cards[index] = { title: newTitle, link: newLink };
-                localStorage.setItem(storageKey, JSON.stringify(cards));
+            if (title && link) {
+                cards[index] = { title, link };
+                localStorage.setItem(cardsKey, JSON.stringify(cards));
+                renderCards();
+            }
+        }
+
+        function deleteCard(index) {
+            if (confirm("هل أنت متأكد من الحذف؟")) {
+                cards.splice(index, 1);
+                localStorage.setItem(cardsKey, JSON.stringify(cards));
                 renderCards();
             }
         }
 
         renderCards();
+
     </script>
 
 </body>
