@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>plus</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+</head>
+
+<body class="p-4">
+
+    <h3>اختر الصف</h3>
+
+    <label class="me-3">
+        <input type="radio" name="grade" value="ola copy"> اولى
+    </label>
+
+    <label class="me-3">
+        <input type="radio" name="grade" value="tanya copy"> ثانيه
+    </label>
+
+    <label class="me-3">
+        <input type="radio" name="grade" value="talta copy"> ثالثه
+    </label>
+
+    <label class="me-3">
+        <input type="radio" name="grade" value="rabaa copy"> رابعه
+    </label>
+
+    <!-- ✅ الصف الخامس -->
+    <label class="me-3">
+        <input type="radio" name="grade" value="khamsa copy"> خامسه
+    </label>
+
+    <!-- ✅ الصف السادس -->
+    <label class="me-3">
+        <input type="radio" name="grade" value="sata copy"> سادسه
+    </label>
+
+    <hr>
+
+    <div class="mb-3">
+        <label>عنوان الكارد</label>
+        <input type="text" id="title" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label>الرابط</label>
+        <input type="text" id="link" class="form-control">
+    </div>
+
+    <button class="btn btn-primary" onclick="createCard()">إنشاء الكارد</button>
+
+    <script>
+        async function createCard() {
+
+            const selected = document.querySelector('input[name="grade"]:checked');
+            if (!selected) {
+                alert("اختر الصف أولاً");
+                return;
+            }
+
+            const grade = selected.value;
+            const title = document.getElementById("title").value;
+            const link = document.getElementById("link").value;
+
+            const token = localStorage.getItem("token");
+
+            await fetch("http://localhost:3000/api/videos", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token
+                },
+                body: JSON.stringify({ title, link, grade })
+            });
+
+            alert("تم إضافة الفيديو ✅");
+
+            // 🔥 التحويل للصفحة بعد الإضافة
+            window.location.href = grade + ".html";
+        }
+    </script>
+
+</body>
+
+</html>

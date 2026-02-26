@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدراسات - الصف الخامس</title>
+
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body class="p-4">
+
+    <section class="text-center mb-4">
+        <h1 class="fw-bold">منصة تعليم الدراسات</h1>
+        <p>الصف الخامس</p>
+    </section>
+
+    <hr>
+
+    <!-- ================= جدول ================= -->
+    <div class="container mt-4">
+        <div class="mb-3">
+            <button id="addBtn" class="btn btn-primary">
+                إضافة صف جديد
+            </button>
+        </div>
+        <h3 class="mb-3">جدول الحصص</h3>
+
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>اليوم</th>
+                    <th>المادة</th>
+                    <th>الوقت</th>
+                    <th>إدارة</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <hr>
+
+    <!-- ================= فيديوهات ================= -->
+    <div class="container mt-4">
+        <h3 class="mb-3">الفيديوهات</h3>
+        <div id="cards" class="row"></div>
+    </div>
+
+    <script>
+
+        const addBtn = document.getElementById("addBtn");
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            addBtn.style.display = "none";
+        }
+
+        const grade = "sata copy";
+        const tableBody = document.getElementById("tableBody");
+        const cardsContainer = document.getElementById("cards");
+
+        /* =========================
+            تحميل الجدول
+        ========================= */
+        async function loadSchedule() {
+            const res = await fetch(`http://localhost:3000/api/schedule/${grade}`);
+            const data = await res.json();
+
+            tableBody.innerHTML = "";
+
+            if (data.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4">لا يوجد بيانات</td>
+                    </tr>`;
+                return;
+            }
+
+            data.forEach(row => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${row.day}</td>
+                        <td>${row.subject}</td>
+                        <td>${row.time}</td>
+                        <td>
+                            ${token ? `
+                                <button onclick="editRow('${row._id}','${row.day}','${row.subject}','${row.time}')" 
+                                    class="btn btn-warning btn-sm">تعديل</button>
+
+                                <button onclick="deleteRow('${row._id}')" 
+                                    class="btn btn-danger btn-sm">حذف</button>
+                            ` : "—"}
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        async function deleteRow(id) {
+            await fetch(`http://localhost:3000/api/schedule/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: token }
+            });
+
+            loadSchedule();
+        }
+
+        async function editRow(id, oldDay, oldSubject, oldTime) {
+
+            const newDay = prompt("اليوم:", oldDay);
+            const newSubject = prompt("المادة:", oldSubject);
+            const newTime = prompt("الوقت:", oldTime);
+
+            if (!newDay || !newSubject || !newTime) return;
+
+            await fetch(`http://localhost:3000/api/schedule/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token
+                },
+                body: JSON.stringify({
+                    day: newDay,
+                    subject: newSubject,
+                    time: newTime
+                })
+            });
+
+            loadSchedule();
+        }
+
+
+
+        addBtn.addEventListener("click", addRow);
+
+        async function addRow() {
+
+            const day = prompt("اليوم:");
+            const subject = prompt("المادة:");
+            const time = prompt("الوقت:");
+
+            if (!day || !subject || !time) {
+                alert("يجب إدخال كل البيانات");
+                return;
+            }
+
+            const res = await fetch("http://localhost:3000/api/schedule", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": token
+                },
+                body: JSON.stringify({
+                    day,
+                    subject,
+                    time,
+                    grade
+                })
+            });
+
+            if (!res.ok) {
+                alert("فشل الإضافة");
+                return;
+            }
+
+            alert("تمت الإضافة ✅");
+
+            loadSchedule();
+        }
+
+        /* =========================
+            تحميل الفيديوهات
+        ========================= */
+        async function loadVideos() {
+            const res = await fetch(`http://localhost:3000/api/videos/${grade}`);
+            const data = await res.json();
+
+            cardsContainer.innerHTML = "";
+
+            if (data.length === 0) {
+                cardsContainer.innerHTML = `
+                    <div class="col-12 text-center">
+                        لا يوجد فيديوهات
+                    </div>`;
+                return;
+            }
+
+            data.forEach(video => {
+                cardsContainer.innerHTML += `
+                    <div class="col-md-4 mb-3">
+                        <div class="card p-3">
+                            <h5>${video.title}</h5>
+                            <a href="${video.link}" target="_blank" 
+                                class="btn btn-success mb-2">
+                                فتح الفيديو
+                            </a>
+                            ${token ? `
+                                <button onclick="deleteVideo('${video._id}')" 
+                                    class="btn btn-danger btn-sm">
+                                    حذف
+                                </button>
+                            ` : ""}
+                        </div>
+                    </div>`;
+            });
+        }
+
+        async function deleteVideo(id) {
+            await fetch(`http://localhost:3000/api/videos/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: token }
+            });
+
+            loadVideos();
+        }
+
+        loadSchedule();
+        loadVideos();
+
+    </script>
+
+</body>
+
+</html>
